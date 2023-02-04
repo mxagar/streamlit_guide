@@ -6,6 +6,8 @@ import pandas as pd
 import streamlit as st
 import altair as alt
 from PIL import Image
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 ######################
 # Page Title
@@ -93,3 +95,4 @@ p = p.properties(
     width=alt.Step(80)  # controls width of bar.
 )
 st.write(p)
+
