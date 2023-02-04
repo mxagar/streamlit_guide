@@ -1,0 +1,32 @@
+name: streamlit-guide
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - requests
+  - pip
+  - jupyter
+  - jupyterlab
+  - scikit-learn
+  - scipy
+  - numpy
+  - pandas
+  - pandas-datareader
+  - matplotlib
+  - opencv
+  - seaborn
+  - cython
+  - nltk
+  - numba
+  - tqdm
+  - pip:
+      - autopep8
+      - joblib
+      - pytest
+      - setuptools
+      - wheel
+      - streamlit
+      - yfinance
+      - altair
+      - vega_datasets
