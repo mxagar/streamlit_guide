@@ -30,3 +30,5 @@ dependencies:
       - yfinance
       - altair
       - vega_datasets
+      - shap
+      - rdkit
