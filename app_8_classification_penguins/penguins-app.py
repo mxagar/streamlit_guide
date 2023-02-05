@@ -48,6 +48,8 @@ df = pd.concat([input_df,penguins],axis=0)
 
 # Encoding of ordinal features
 # https://www.kaggle.com/pratik1120/penguin-dataset-eda-classification-and-clustering
+# This is not optimal, we should load a processing pipeline
+# or include it at the front of the inference artifact
 encode = ['sex','island']
 for col in encode:
     dummy = pd.get_dummies(df[col], prefix=col)
