@@ -30,7 +30,8 @@ This app retrieves cryptocurrency prices for the top 100 cryptocurrency from the
 """)
 #---------------------------------#
 # About
-expander_bar = st.beta_expander("About")
+#expander_bar = st.beta_expander("About")
+expander_bar = st.expander("About")
 expander_bar.markdown("""
 * **Python libraries:** base64, pandas, streamlit, numpy, matplotlib, seaborn, BeautifulSoup, requests, json, time
 * **Data source:** [CoinMarketCap](http://coinmarketcap.com).
@@ -42,7 +43,8 @@ expander_bar.markdown("""
 # Page layout (continued)
 ## Divide page to 3 columns (col1 = sidebar, col2 and col3 = page contents)
 col1 = st.sidebar
-col2, col3 = st.beta_columns((2,1))
+#col2, col3 = st.beta_columns((2,1))
+col2, col3 = st.columns((2,1))
 
 #---------------------------------#
 # Sidebar + Main panel
@@ -60,9 +62,17 @@ def load_data():
     data = soup.find('script', id='__NEXT_DATA__', type='application/json')
     coins = {}
     coin_data = json.loads(data.contents[0])
-    listings = coin_data['props']['initialState']['cryptocurrency']['listingLatest']['data']
-    for i in listings:
-      coins[str(i['id'])] = i['slug']
+    # I had to modify this code because Coinmarketcap
+    # changed the format
+    #listings = coin_data['props']['initialState']['cryptocurrency']['listingLatest']['data']
+    coin_data_ = json.loads(coin_data['props']['initialState'])
+    listings = coin_data_['cryptocurrency']['listingLatest']['data']
+    # Now, listings has the key in the first element
+    # Values in the next elements
+    keys = listings[0]['keysArr']
+    key2idx = {keys[i]: i for i in range(len(keys))}
+    for i in listings[1:]:
+      coins[str(i[key2idx['id']])] = i[key2idx['slug']]
 
     coin_name = []
     coin_symbol = []
@@ -73,15 +83,26 @@ def load_data():
     price = []
     volume_24h = []
 
-    for i in listings:
-      coin_name.append(i['slug'])
-      coin_symbol.append(i['symbol'])
-      price.append(i['quote'][currency_price_unit]['price'])
-      percent_change_1h.append(i['quote'][currency_price_unit]['percent_change_1h'])
-      percent_change_24h.append(i['quote'][currency_price_unit]['percent_change_24h'])
-      percent_change_7d.append(i['quote'][currency_price_unit]['percent_change_7d'])
-      market_cap.append(i['quote'][currency_price_unit]['market_cap'])
-      volume_24h.append(i['quote'][currency_price_unit]['volume_24h'])
+    key_base = 'quote.'+currency_price_unit
+    for i in listings[1:]:
+      #coin_name.append(i['slug'])
+      #coin_symbol.append(i['symbol'])
+      #price.append(i['quote'][currency_price_unit]['price'])
+      #percent_change_1h.append(i['quote'][currency_price_unit]['percent_change_1h'])
+      #percent_change_24h.append(i['quote'][currency_price_unit]['percent_change_24h'])
+      #percent_change_7d.append(i['quote'][currency_price_unit]['percent_change_7d'])
+      #market_cap.append(i['quote'][currency_price_unit]['market_cap'])
+      #volume_24h.append(i['quote'][currency_price_unit]['volume_24h'])
+      #
+      # New format
+      coin_name.append(i[key2idx['slug']])
+      coin_symbol.append(i[key2idx['symbol']])
+      price.append(i[key2idx[key_base+'.price']])
+      percent_change_1h.append(i[key2idx[key_base+'.percentChange1h']])
+      percent_change_24h.append(i[key2idx[key_base+'.percentChange24h']])
+      percent_change_7d.append(i[key2idx[key_base+'.percentChange7d']])
+      market_cap.append(i[key2idx[key_base+'.marketCap']])
+      volume_24h.append(i[key2idx[key_base+'.volume24h']])
 
     df = pd.DataFrame(columns=['coin_name', 'coin_symbol', 'market_cap', 'percent_change_1h', 'percent_change_24h', 'percent_change_7d', 'price', 'volume_24h'])
     df['coin_name'] = coin_name
@@ -147,23 +168,26 @@ if percent_timeframe == '7d':
     if sort_values == 'Yes':
         df_change = df_change.sort_values(by=['percent_change_7d'])
     col3.write('*7 days period*')
-    plt.figure(figsize=(5,25))
+    fig = plt.figure(figsize=(5,25))
     plt.subplots_adjust(top = 1, bottom = 0)
     df_change['percent_change_7d'].plot(kind='barh', color=df_change.positive_percent_change_7d.map({True: 'g', False: 'r'}))
-    col3.pyplot(plt)
+    #col3.pyplot(plt)
+    col3.pyplot(fig)
 elif percent_timeframe == '24h':
     if sort_values == 'Yes':
         df_change = df_change.sort_values(by=['percent_change_24h'])
     col3.write('*24 hour period*')
-    plt.figure(figsize=(5,25))
+    fig = plt.figure(figsize=(5,25))
     plt.subplots_adjust(top = 1, bottom = 0)
     df_change['percent_change_24h'].plot(kind='barh', color=df_change.positive_percent_change_24h.map({True: 'g', False: 'r'}))
-    col3.pyplot(plt)
+    #col3.pyplot(plt)
+    col3.pyplot(fig)
 else:
     if sort_values == 'Yes':
         df_change = df_change.sort_values(by=['percent_change_1h'])
     col3.write('*1 hour period*')
-    plt.figure(figsize=(5,25))
+    fig = plt.figure(figsize=(5,25))
     plt.subplots_adjust(top = 1, bottom = 0)
     df_change['percent_change_1h'].plot(kind='barh', color=df_change.positive_percent_change_1h.map({True: 'g', False: 'r'}))
-    col3.pyplot(plt)
+    #col3.pyplot(plt)
+    col3.pyplot(fig)
