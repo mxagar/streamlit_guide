@@ -11,6 +11,7 @@ This app predicts the **Iris flower** type!
 
 st.sidebar.header('User Input Parameters')
 
+# Pack user input in a function
 def user_input_features():
     sepal_length = st.sidebar.slider('Sepal length', 4.3, 7.9, 5.4)
     sepal_width = st.sidebar.slider('Sepal width', 2.0, 4.4, 3.4)
@@ -32,9 +33,14 @@ iris = datasets.load_iris()
 X = iris.data
 Y = iris.target
 
+# This is not the best way:
+# We should not train when the app is opened,
+# instead we should load the trained model pipeline,
+# e.g., from a pickle.
 clf = RandomForestClassifier()
 clf.fit(X, Y)
 
+# Perform prediction and display
 prediction = clf.predict(df)
 prediction_proba = clf.predict_proba(df)
 
