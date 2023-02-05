@@ -19,16 +19,48 @@ Detailed documentation:
 
     https://docs.streamlit.io/library/get-started
 
+List of concepts:
+
+- Display images
+- Display Markdown text
+- Expander bars (e.g., About)
+- Headers, sub-headers
+- Sidebar area (collapsable)
+- Input text areas
+- Showing python variables, dataframes, etc.
+- Line charts
+- Plots: altair, matplotlib, seaborn
+- Fetching datasets, conditional on variables
+- Refreshing fetched datasets: cache
+- Downloading generated files/dataframes/CSVs
+- Catching variables with widgets:
+    - Dropdown: selectbox
+    - Multiple categories: multiselect
+    - Slider
+- Button that creates actions
+- Page layout:
+    - Columns
+    - Tabs
+    - Grouping user input in functions
+
+General notes:
+
+- If we change something in the code (e.g., Markdown titles), the app will detect that and generate a `Re-run` button.
+- Widgets will appear in order of definition in the main body or the side bar.
+- If a widget introduces a variables user in later elements, those elements are refreshed or hidden to be created again with their associated widget (e.g., button)
+
 Author: Mikel Sagardia
 Date: 2023-02-04
 """
 
 import streamlit as st
+import numpy as np
 import pandas as pd
 from PIL import Image
 import matplotlib.pyplot as plt
 import seaborn as sns
 import altair as alt
+import base64
 
 # Load page/app logo
 image = Image.open('logo.jpg')
@@ -42,6 +74,12 @@ st.write("""
 
 This **app** is **wonderful**!
 
+""")
+
+# About / Expander bar
+expander_bar = st.expander("About")
+expander_bar.markdown("""
+Name, LinkedIn, Web, etc.
 """)
 
 # We can define any variables/structures
@@ -62,6 +100,14 @@ st.line_chart(df['var1'])
 #st.sidebar.header('My header')
 st.header('My header')
 st.subheader('My subheader')
+
+# Markdown Text
+# Another way of writing text
+st.markdown("""
+## Header
+
+My text.
+""")
 
 # Input text
 default_input = "bla bla"
@@ -85,6 +131,7 @@ st.write("""
 """)
 
 # Plot Matplotlib/Seaborn figure
+# Always catch fig and pass it to st.pyplot()
 fig = plt.figure()
 plt.plot([1,2,3], [1,2,3])
 sns.lineplot(x=[1,2,3],y=[3,2,1])
@@ -102,4 +149,114 @@ p = p.properties(
 )
 st.write(p)
 
+## Dataframe filtering: select key variable, year
+# Example: app_3_eda_basketball
+# Sidebar drop down widget - Feature value selection: Year
+st.sidebar.header('User Input Features')
+selected_year = st.sidebar.selectbox('Year', list(reversed(range(1950,2020))))
 
+## Web-scrapping: Fetch data frm HTML/web conditional on variable and refresh!
+# Caching: https://docs.streamlit.io/library/api-reference/performance/st.cache
+# Example: app_3_eda_basketball
+@st.cache # Run every time we change function name / code / parameter values (year) and store results in local cache
+def load_data(year):
+    url = "https://www.basketball-reference.com/leagues/NBA_" + str(year) + "_per_game.html"
+    html = pd.read_html(url, header = 0)
+    df = html[0]
+    # Do all the pre-processing you need here...
+    df = df.fillna(0)
+    return df
+df = load_data(selected_year)
+
+## Dataframe filtering
+# Use side panel to select categorical feature values
+# Then, filter dataframe and show it
+# Example: app_3_eda_basketball, app_5_eda_sp500_stock
+# Sidebar multiselection widget - Team selection
+teams = sorted(df.team.unique())
+selected_teams = st.sidebar.multiselect('Teams', teams, teams) # name, all options/categories, default options/categories
+# Sidebar slider widget - Team selection
+num_members = st.sidebar.slider('Minimum members', 20, 50, 30) # min, max, default
+# Sidebar multiselection widget - Position selection
+positions = ['C','PF','SF','PG','SG']
+selected_positions = st.sidebar.multiselect('Position', positions, positions)
+# Filter and display dataframe
+df_filtered = df[(df.team.isin(selected_teams) & df.position.isin(selected_positions) & df.members >= num_members)]
+st.dataframe(df_filtered)
+
+## Button to display heatmap
+# Example: app_3_eda_basketball
+if st.button('Correlation Heatmap'):
+    st.header('Correlation Heatmap')
+    # It might not work if we don't save & load the df
+    # Maybe it's because of some type issues?
+    df.to_csv('output.csv',index=False)
+    df = pd.read_csv('output.csv')
+    corr = df.corr()
+    mask = np.zeros_like(corr)
+    mask[np.triu_indices_from(mask)] = True
+    with sns.axes_style("white"):
+        fig, ax = plt.subplots(figsize=(7, 5))
+        ax = sns.heatmap(corr, mask=mask, vmax=1, square=True)
+    st.pyplot(fig)
+    
+## File download, e.g., generated/filtered CSV
+# https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806
+# df passed, encoded to bytes as b64
+# then downloaded as dataset.csv
+# We can modify the name of the downloaded file changing "dataset.csv"
+# Download functionality is shown as a Markdown link
+# Example: app_3_eda_basketball
+def filedownload(df):
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()  # strings <-> bytes conversions
+    href = f'<a href="data:file/csv;base64,{b64}" download="dataset.csv">Download CSV File</a>'
+    return href
+st.markdown(filedownload(df_filtered), unsafe_allow_html=True)
+
+## Page layout: Columns
+# We can divide the page in columns
+# The sidebar is the first column and it can be collapsed
+# The rest of the columns is defined with relative size
+# Example: app_6_eda_cryptocurrency
+st.set_page_config(layout="wide") # Expand app to full width
+col1 = st.sidebar # the sidebar is a collapsable col
+col2, col3 = st.columns((2,1)) # 2:1 size ratio, i.e., col2 is 2x width compared to col3
+# Then, instead of defining widgets/elements with st.element
+# we do it with the columns:
+col1.header("Header 1")
+col2.subheader("Header 2")
+selected_letter = col1.selectbox("Choose letter", ('A', 'B', 'C'))
+selected_coin = col1.multiselect('Coin', ['USD', 'EUR'], ['USD', 'EUR'])
+col3.write("""...""")
+col2.markdown("""...""")
+col2.dataframe(df)
+col3.pyplot(fig)
+# ...
+
+## Page layout: Tabs
+tab1, tab2, tab3 = st.tabs(["Cat", "Dog", "Owl"])
+with tab1:
+   st.header("A cat")
+   st.image("https://static.streamlit.io/examples/cat.jpg", width=200)
+with tab2:
+   st.header("A dog")
+   st.image("https://static.streamlit.io/examples/dog.jpg", width=200)
+with tab3:
+   st.header("An owl")
+   st.image("https://static.streamlit.io/examples/owl.jpg", width=200)
+
+## Page layout: packing user input features into a function
+# Example: app_7_classification_iris
+def user_input_features():
+    sepal_length = st.sidebar.slider('Sepal length', 4.3, 7.9, 5.4) # min, max, default
+    sepal_width = st.sidebar.slider('Sepal width', 2.0, 4.4, 3.4)
+    petal_length = st.sidebar.slider('Petal length', 1.0, 6.9, 1.3)
+    petal_width = st.sidebar.slider('Petal width', 0.1, 2.5, 0.2)
+    data = {'sepal_length': sepal_length,
+            'sepal_width': sepal_width,
+            'petal_length': petal_length,
+            'petal_width': petal_width}
+    features = pd.DataFrame(data, index=[0])
+    return features
+    # Then we pass features to a model for prediction!
