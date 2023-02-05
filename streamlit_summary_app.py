@@ -43,12 +43,20 @@ List of concepts:
     - Tabs
     - Grouping user input in functions
 - File uploading
+- Use of conditionals to control displayed app parts
+
+Important examples:
+
+- app_3_eda_basketball
+- app_6_eda_cryptocurrency
+- app_8_classification_penguins
 
 General notes:
 
 - If we change something in the code (e.g., Markdown titles), the app will detect that and generate a `Re-run` button.
 - Widgets will appear in order of definition in the main body or the side bar.
 - If a widget introduces a variables user in later elements, those elements are refreshed or hidden to be created again with their associated widget (e.g., button)
+- Conditionals can be used to change the app parts which are displayed on-the-fly
 
 Author: Mikel Sagardia
 Date: 2023-02-04
@@ -271,6 +279,7 @@ st.sidebar.markdown("""
 [Example CSV input file](https://raw.githubusercontent.com/dataprofessor/data/master/penguins_example.csv)
 """)
 # Collects user input features into dataframe
+# Conditionals can be used to change displayed app parts on-the-fly
 uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
 if uploaded_file is not None:
     input_df = pd.read_csv(uploaded_file)
