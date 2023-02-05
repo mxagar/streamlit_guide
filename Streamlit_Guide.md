@@ -25,7 +25,11 @@ Table of contents:
     - [0.1 Basic File Structure and How to Run It](#01-basic-file-structure-and-how-to-run-it)
   - [1. App 1: Simple Stock Price Chart](#1-app-1-simple-stock-price-chart)
   - [2. App 2: DNA Count and Plot App](#2-app-2-dna-count-and-plot-app)
-  - [3. App 3:](#3-app-3)
+  - [3. App 3: NBA Team Statistics](#3-app-3-nba-team-statistics)
+  - [4. App 4: NFL Team Statistics](#4-app-4-nfl-team-statistics)
+  - [5. App 5: SP500 Stock EDA](#5-app-5-sp500-stock-eda)
+  - [6. App 6: Cryptocurrency EDA](#6-app-6-cryptocurrency-eda)
+  - [7. App 7: Iris Classification App](#7-app-7-iris-classification-app)
   - [Folders](#folders)
 
 ## 0. Introduction and Setup
@@ -90,7 +94,11 @@ streamlit run myapp.py
 # [http://localhost:](http://localhost:8501)
 ```
 
-If we change something in the code (e.g., Markdown titles), the app will detect that and generate a `Re-run` button.
+General notes:
+
+- If we change something in the code (e.g., Markdown titles), the app will detect that and generate a `Re-run` button.
+- Widgets will appear in order of definition in the main body or the side bar.
+- If a widget introduces a variables user in later elements, those elements are refreshed or hidden to be created again with their associated widget (e.g., button)
 
 ## 1. App 1: Simple Stock Price Chart
 
@@ -106,20 +114,57 @@ In this app, the display of different types of variables (lists, dicts, datafram
 
 Everything is summarized in the main example app: [`streamlit_summary_app.py`](streamlit_summary_app.py).
 
-## 3. App 3: 
+## 3. App 3: NBA Team Statistics
 
 The app file: [`app_3_eda_basketball/basketball_app.py`](app_3_eda_basketball/basketball_app.py).
 
+Ver important app in which the following concepts are shown:
+
+- How to fetch data from the web and actualize an internal dataset (cache)
+- How to filter a dataset with variables entered in a sidebar (which is collapsable):
+  - Drop down
+  - Category selection
+- How to filter internal datasets on entered variables and display them
+- How to provide download links to internally generated datasets
+- How to create buttons that trigger actions, e.g., plot on pressed
+
+## 4. App 4: NFL Team Statistics
+
+The app file: [`app_4_eda_football/basketball_app.py`](app_4_eda_football/football_app.py).
+
+This app is very similar to the previous one; no new concepts are introduced.
+
+## 5. App 5: SP500 Stock EDA
+
+The app file: [`app_5_eda_sp500_stock/sp500-app.py`](app_5_eda_sp500_stock/sp500-app.py).
+
+This app is very similar to the previous two; new concepts:
+
+- Sidebar slider widget
+- Downloading using the `yfinance` library
+- Plotting several diagrams
+
+## 6. App 6: Cryptocurrency EDA
+
+The app file: [`app_6_eda_cryptocurrency/crypto-price-app.py`](app_6_eda_cryptocurrency/crypto-price-app.py).
+
+This app is interesting, since it shows the following concepts:
+
+- How to control page layout
+- Expandable boxes
+- How to perform web-scrapping on a real website using BeautifulSoup; more info: [Web Scraping Crypto Prices With Python](https://tommycc.medium.com/web-scraping-crypto-prices-with-python-41072ea5b5bf)
+
+It's a cool application because it builds the dataset on-the-fly, i.e., it shows real updated data of cryptocurrency values fetched from Coinmarketcap using BeautifulSoup.
+
+## 7. App 7: Iris Classification App
+
+The app file: [`app_7_classification_iris/iris-ml-app.py`](app_7_classification_iris/iris-ml-app.py).
+
+This is the first app in which a machine learning model is built and used. Apart from that, no really new concepts are shown. It's an interesting app because the model predicts based on user-controlled sliders, but probably, it's not the best example of deployment, because the model is trained when the app is opened; instead, we should load a pickle pipeline, for instance.
 
 ## Folders
 
 ```
-
-app_3_eda_basketball
-app_4_eda_football
-app_5_eda_sp500_stock
-app_6_eda_cryptocurrency
-app_7_classification_iris
 app_8_classification_penguins
 app_9_regression_boston_housing
 app_10_regression_bioinformatics_solubility
