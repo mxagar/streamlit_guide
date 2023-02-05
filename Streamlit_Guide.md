@@ -4,7 +4,7 @@ This is a [Streamlit](https://streamlit.io/) guide in which 12 data science web 
 
 The present document is a basic guide for Streamlit based on that course. In addition, the file [`streamlit_summary_app.py`](streamlit_summary_app.py) is a summary app file, which doesn't run, bit which is a compilation of the most important commands.
 
-Altogether, 12 apps are built (see co-located folders):
+Altogether, these apps are built (see co-located folders):
 
 1. Simple Stock Price
 2. Simple Bioinformatics DNA Count
@@ -23,6 +23,7 @@ Table of contents:
 - [Streamlit Guide](#streamlit-guide)
   - [0. Introduction and Setup](#0-introduction-and-setup)
     - [0.1 Basic File Structure and How to Run It](#01-basic-file-structure-and-how-to-run-it)
+    - [0.2 How Should I Use this Guide?](#02-how-should-i-use-this-guide)
   - [1. App 1: Simple Stock Price Chart](#1-app-1-simple-stock-price-chart)
   - [2. App 2: DNA Count and Plot App](#2-app-2-dna-count-and-plot-app)
   - [3. App 3: NBA Team Statistics](#3-app-3-nba-team-statistics)
@@ -30,6 +31,7 @@ Table of contents:
   - [5. App 5: SP500 Stock EDA](#5-app-5-sp500-stock-eda)
   - [6. App 6: Cryptocurrency EDA](#6-app-6-cryptocurrency-eda)
   - [7. App 7: Iris Classification App](#7-app-7-iris-classification-app)
+  - [8. App 8: Penguin Classification App](#8-app-8-penguin-classification-app)
   - [Folders](#folders)
 
 ## 0. Introduction and Setup
@@ -100,6 +102,18 @@ General notes:
 - Widgets will appear in order of definition in the main body or the side bar.
 - If a widget introduces a variables user in later elements, those elements are refreshed or hidden to be created again with their associated widget (e.g., button)
 
+### 0.2 How Should I Use this Guide?
+
+First, have look at the summary script: [`streamlit_summary_app.py`](streamlit_summary_app.py).
+
+Then, check these apps:
+
+- [3. App 3: NBA Team Statistics](#3-app-3-nba-team-statistics)
+- [6. App 6: Cryptocurrency EDA](#6-app-6-cryptocurrency-eda)
+- [8. App 8: Penguin Classification App](#8-app-8-penguin-classification-app)
+
+Finally, use the summary script to build your app: [`streamlit_summary_app.py`](streamlit_summary_app.py).
+
 ## 1. App 1: Simple Stock Price Chart
 
 The app file: [`app_1_simple_stock_price/myapp2.py`](app_1_simple_stock_price/myapp2.py).
@@ -162,10 +176,27 @@ The app file: [`app_7_classification_iris/iris-ml-app.py`](app_7_classification_
 
 This is the first app in which a machine learning model is built and used. Apart from that, no really new concepts are shown. It's an interesting app because the model predicts based on user-controlled sliders, but probably, it's not the best example of deployment, because the model is trained when the app is opened; instead, we should load a pickle pipeline, for instance.
 
+## 8. App 8: Penguin Classification App
+
+The app file: [`app_8_classification_penguins/penguins-app.py`](app_8_classification_penguins/penguins-app.py).
+
+This is a machine learning application app in which Penguins are classified based on 4 numerical and 2 categorical variables. The original dataset can be downloaded from [allisonhorst/palmerpenguins](https://github.com/allisonhorst/palmerpenguins). The app is very improvable in terms of production readiness, but it's a nice example of the basic tools available on Streamlit to build an app. Data processing and modeling are done separately.
+
+The repository has a companion files:
+
+- [`penguins_example.csv`](app_8_classification_penguins/penguins_example.csv): example CSV, in case the user uploads a CSV, so that he/she keeps to the format
+- [`penguins_cleaned.csv`](app_8_classification_penguins/penguins_cleaned.csv): training dataset
+- [`penguins-model-building.py`](app_8_classification_penguins/penguins-model-building.py): model pickle is built
+- [`penguins_clf.pkl`](app_8_classification_penguins/penguins_clf.pkl): model pickle
+
+New concepts:
+
+- A model pickle is loaded; we should similarly load the processing pipeline
+- File upload widget
+
 ## Folders
 
 ```
-app_8_classification_penguins
 app_9_regression_boston_housing
 app_10_regression_bioinformatics_solubility
 ```
