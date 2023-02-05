@@ -32,7 +32,17 @@ Table of contents:
   - [6. App 6: Cryptocurrency EDA](#6-app-6-cryptocurrency-eda)
   - [7. App 7: Iris Classification App](#7-app-7-iris-classification-app)
   - [8. App 8: Penguin Classification App](#8-app-8-penguin-classification-app)
-  - [Folders](#folders)
+  - [9. App 9: Boston Housing App](#9-app-9-boston-housing-app)
+  - [10. App 10: Molecular Solubility Prediction App](#10-app-10-molecular-solubility-prediction-app)
+  - [11. Deployment to Heroku](#11-deployment-to-heroku)
+    - [Files](#files)
+      - [`.slugignore`](#slugignore)
+      - [`Procfile`](#procfile)
+      - [`setup.sh`](#setupsh)
+      - [`runtime.txt`](#runtimetxt)
+      - [`requirements.txt`](#requirementstxt)
+    - [Deployment Process](#deployment-process)
+  - [12. Deployment to Streamlit Share](#12-deployment-to-streamlit-share)
 
 ## 0. Introduction and Setup
 
@@ -100,7 +110,8 @@ General notes:
 
 - If we change something in the code (e.g., Markdown titles), the app will detect that and generate a `Re-run` button.
 - Widgets will appear in order of definition in the main body or the side bar.
-- If a widget introduces a variables user in later elements, those elements are refreshed or hidden to be created again with their associated widget (e.g., button)
+- If a widget introduces a variables user in later elements, those elements are refreshed or hidden to be created again with their associated widget (e.g., button).
+- Conditionals can be used to change the app parts which are displayed on-the-fly.
 
 ### 0.2 How Should I Use this Guide?
 
@@ -170,6 +181,8 @@ This app is interesting, since it shows the following concepts:
 
 It's a cool application because it builds the dataset on-the-fly, i.e., it shows real updated data of cryptocurrency values fetched from Coinmarketcap using BeautifulSoup.
 
+I had to fix the web-scrapping code, because the Coinmarketcap web has changed.
+
 ## 7. App 7: Iris Classification App
 
 The app file: [`app_7_classification_iris/iris-ml-app.py`](app_7_classification_iris/iris-ml-app.py).
@@ -194,9 +207,63 @@ New concepts:
 - A model pickle is loaded; we should similarly load the processing pipeline
 - File upload widget
 
-## Folders
+## 9. App 9: Boston Housing App
 
-```
-app_9_regression_boston_housing
-app_10_regression_bioinformatics_solubility
-```
+The app file: [`app_9_regression_boston_housing/boston-house-ml-app.py`](app_9_regression_boston_housing/boston-house-ml-app.py).
+
+The Boston housing dataset is used to train a random forest and its feature importances are analyzed. Nothing really new is done here. The example is not optimal, because the dataset is downloaded, then the model trained and finally the inference and analysis done &mdash; all in one file.
+
+I had to fix the dataset acquisition, because Boston is not included in Scikit-Learn anymore due to an ethical issue.
+
+## 10. App 10: Molecular Solubility Prediction App
+
+The app file: [`app_10_regression_bioinformatics_solubility/solubility-app.py`](app_10_regression_bioinformatics_solubility/solubility-app.py).
+
+The repository has a companion files: a notebook (where the model pickle is created), a logo JPEG, and a model PKL.
+
+A sequence of molecules is input and its solubility is predicted with a previously created regression model.
+
+Nothing new is used here; perhaps the characteristic property of this example is the fact that custom functions are written which are used to transform the data for the model.
+
+## 11. Deployment to Heroku
+
+In this example a Github deployment is done to Heroku: we create an app in Heroku, link a Github repository with the `streamlit` app file to it and deploy it *continuously* whenever we push the code to the repo.
+
+As mentioned, the Github repository needs to contain a web app based on `streamlit`; to keep things easy, I'll take this very repository but I'll deploy only the penguins app, so the web app will be: [`app_8_classification_penguins/penguins-app.py`](app_8_classification_penguins/penguins-app.py).
+
+We nee to prepare the following deployment files, which are present in this very repository:
+
+- [`.slugignore`](.slugignore): which files from the repo should be ignored for the Heroku deployment.
+- [`Procfile`](Procfile): Heroku app command.
+- [`setup.sh`](setup.sh): setup for streamlit.
+- [`runtime.txt`](runtime.txt): Python version for Heroku deployment.
+- [`requirements.txt`](requirements.txt): requirements for the app.
+
+In addition to those files and the web app, we also need any extra file that the web app might require (e.g., the pickle, etc.).
+
+In the following, I explain first how to create those deployment files. Then, the deployment process is explained.
+
+### Files
+
+#### [`.slugignore`](.slugignore)
+
+
+
+#### [`Procfile`](Procfile)
+
+
+
+#### [`setup.sh`](setup.sh)
+
+
+#### [`runtime.txt`](runtime.txt)
+
+
+#### [`requirements.txt`](requirements.txt)
+
+
+### Deployment Process
+
+## 12. Deployment to Streamlit Share
+
+
