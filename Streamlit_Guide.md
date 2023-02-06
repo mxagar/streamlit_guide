@@ -348,7 +348,7 @@ Step by step guide to deploy the app `penguins-app-streamlit`:
 - Then, the app will be deployed automatically right away; however, note that:
   - If we have no `Procfile`, the slug will be deployed, but nothing will happen (a default blank app is launched).
   - If we have no executable code, nothing will happen (a default blank app is launched).
-- Manual deploy: we can also deploy manually clicking on the button!
+- Manual deploy: we can also deploy manually clicking on the button `Deploy Branch`!
 
 We can **check the Heroku app in the web GUI**: We select the app in the main dashboard and:
 
@@ -357,7 +357,13 @@ We can **check the Heroku app in the web GUI**: We select the app in the main da
   - If we have no `Procfile`, the slug will be deployed, but nothing will happen (a default blank app is launched); the logs will reflect that
 
 
-
 ## 12. Deployment to Streamlit Share
 
+[streamlit-10](https://github.com/dataprofessor/streamlit-10)
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/dataprofessor/streamlit-10/main/sp500-app.py)
+
+
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/mxagar/streamlit_guide/main/app.py)
 
