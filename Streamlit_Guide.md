@@ -411,4 +411,6 @@ To deploy it in Streamlit share, we need to go to [https://share.streamlit.io/](
   - (Secrets using TOML format)
 - Deploy! We get the side panel `Manage`, where we see how the app is being deployed.
 
-After the deployment is done (10-15 mins later), we get the link to the app. We can embed the link in a badge using the pattern above.
+After the deployment is done, we get the link to the app. We can embed the link in a badge using the pattern above.
+
+:warning: The deployment took in my case very long with the complete repository and the links and it didn't really complete. I think that [Streamlit Share](https://share.streamlit.io/) is conceived for much smaller and slim apps. That, or the links don't work.
