@@ -229,9 +229,9 @@ Nothing new is used here; perhaps the characteristic property of this example is
 
 In this example a Github deployment is done to Heroku: we create an app in Heroku, link a Github repository with the `streamlit` app file to it and deploy it *continuously* whenever we push the code to the repo.
 
-As mentioned, the Github repository needs to contain a web app based on `streamlit`; to keep things easy, I'll take this very repository but I'll deploy only the penguins app, so the web app will be: [`app_8_classification_penguins/penguins-app.py`](app_8_classification_penguins/penguins-app.py).
+As mentioned, the Github repository needs to contain a web app based on `streamlit`; to keep things easy, I'll take this very repository but I'll deploy only the penguins app, so the web app will be: [`app_8_classification_penguins/penguins-app.py`](app_8_classification_penguins/penguins-app.py). A Github repository which contains only the app is [penguins-heroku](https://github.com/dataprofessor/penguins-heroku).
 
-We nee to prepare the following deployment files, which are present in this very repository:
+For any Heroku deployment we need to prepare the following deployment files, which are present in the current repository:
 
 - [`.slugignore`](.slugignore): which files from the repo should be ignored for the Heroku deployment.
 - [`Procfile`](Procfile): Heroku app command.
@@ -239,7 +239,7 @@ We nee to prepare the following deployment files, which are present in this very
 - [`runtime.txt`](runtime.txt): Python version for Heroku deployment.
 - [`requirements.txt`](requirements.txt): requirements for the app.
 
-In addition to those files and the web app, we also need any extra file that the web app might require (e.g., the pickle, etc.).
+In addition to those files and the web app, we also need any extra file that the web app might require (e.g., the pickle file, etc.).
 
 In the following, I explain first how to create those deployment files. Then, the deployment process is explained.
 
@@ -247,22 +247,116 @@ In the following, I explain first how to create those deployment files. Then, th
 
 #### [`.slugignore`](.slugignore)
 
+All files which need to be ignored in the deployment; recall that we have a 500 MB slug size limit in Heroku. In this case:
 
+```
+eda_fe_summary
+app_1_simple_stock_price
+app_2_simple_bioinformatics_dna
+app_3_eda_basketball
+app_4_eda_football
+app_5_eda_sp500_stock
+app_6_eda_cryptocurrency
+app_7_classification_iris
+app_9_regression_boston_housing
+app_10_regression_bioinformatics_solubility
+Streamlit_Guide.md
+streamlit_summary_app.py
+README.md
+```
 
 #### [`Procfile`](Procfile)
 
+Command to run when the dyno is spun up. In this case, two commands are run:
 
+1. First, a `streamlit` configuration file is created with `setup.sh`
+2. Then, the `streamlit` app is run as always
+
+Thus:
+
+```
+web: sh setup.sh && streamlit run penguins-app.py
+```
 
 #### [`setup.sh`](setup.sh)
 
+A setup bash script which creates the `streamlit` configuration file; we could add that file to our repository, too, I guess.
+
+```bash
+mkdir -p ~/.streamlit/
+echo "\
+[server]\n\
+port = $PORT\n\
+enableCORS = false\n\
+headless = true\n\
+\n\
+" > ~/.streamlit/config.toml
+```
 
 #### [`runtime.txt`](runtime.txt)
 
+Python version to be run. Heroku has limitations in that respect: [Heroku: Supported Python Runtimes](https://devcenter.heroku.com/articles/python-support#supported-runtimes). The environment in which we develop locally should have that Python version, too.
+
+```bash
+python --version # 3.9.16, supported in all stacks (Heroku)
+```
+
+Thus:
+
+```
+python-3.9.16
+```
 
 #### [`requirements.txt`](requirements.txt)
 
+Any libraries which are necessary to run the deployed app; usually, the imports are a good hint. To get the local dependency versions, we can run:
+
+```bash
+pip freeze # > requirements.txt
+conda list # > conda_packages.txt
+```
+
+In our case, we have these dependencies:
+
+```
+streamlit==1.17.0
+pandas==1.5.3
+numpy==1.23.5
+scikit-learn==1.2.1
+```
 
 ### Deployment Process
+
+Any Heroku deployment is very easy. To create an app (*slug* in Heroku), we can work with the CLI or using the GUI. In the following, I will explain how to do it via the web GUI. For more information, visit these guides:
+
+- [`MLOpsND_Deployment.md`: Continuous Deployment with Heroku](https://github.com/mxagar/mlops_udacity/blob/main/03_Deployment/MLOpsND_Deployment.md#44-continuous-deployment-with-heroku)
+- [`MLOpsND_Deployment.md`: Heroku CLI](https://github.com/mxagar/mlops_udacity/blob/main/03_Deployment/MLOpsND_Deployment.md#54-heroku-revisited-procfiles-and-cli)
+
+Step by step guide to deploy the app `penguins-app-streamlit`:
+
+- Log in to Heroku (we need to have an account and a subscription)
+- New: Create new app (Europe / US)
+- Select name, e.g., ``penguins-app-streamlit``
+- Deployment method: we choose `Github`
+  - Connect to Github, authorize / grant access
+  - Select repository: `streamlit_guide`
+  - Connect
+- Automatic deploys
+  - Choose branch: `main` (or another)
+  - If we had CI (Github actions), we'd wait for it to pass before deploying
+  - Enable automatic deploys: every time we push to the branch (and tests pass, if any) the code is deployed on Heroku
+- Then, the app will be deployed automatically right away; however, note that:
+  - If we have no `Procfile`, the slug will be deployed, but nothing will happen (a default blank app is launched).
+  - If we have no executable code, nothing will happen (a default blank app is launched).
+- Manual deploy: we can also deploy manually clicking on the button!
+
+We can **check the Heroku app in the web GUI**: We select the app in the main dashboard and:
+
+- Open App: App management dashboard is shown
+- More > View logs: logs of deployment are shown
+  - If we have no `Procfile`, the slug will be deployed, but nothing will happen (a default blank app is launched); the logs will reflect that
+
+
 
 ## 12. Deployment to Streamlit Share
 
