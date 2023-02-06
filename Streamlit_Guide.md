@@ -4,19 +4,24 @@ This is a [Streamlit](https://streamlit.io/) guide in which 12 data science web 
 
 The present document is a basic guide for Streamlit based on that course. In addition, the file [`streamlit_summary_app.py`](streamlit_summary_app.py) is a summary app file, which doesn't run, bit which is a compilation of the most important commands.
 
-Altogether, these apps are built (see co-located folders):
+Altogether, these apps are built (see co-located folders; most important apps in bold):
 
 1. Simple Stock Price
 2. Simple Bioinformatics DNA Count
-3. EDA Basketball
+3. **EDA Basketball**
 4. EDA Football
 5. EDA SP500 Stock Price
-6. EDA Cryptocurrency
+6. **EDA Cryptocurrency**
 7. Classification Iris
-8. Classification Penguin
+8. **Classification Penguin**
 9. Regression Boston Housing
 10. Regression Bioinformatics Solubility
-11. Deploy to Heroku
+11. **Deploy to Heroku**
+12. Deploy to Streamlit Share
+
+Additionally, check the following app I deployed using `streamlit`:
+
+[https://github.com/mxagar/course_recommender_streamlit](https://github.com/mxagar/course_recommender_streamlit)
 
 Table of contents:
 
@@ -124,6 +129,11 @@ Then, check these apps:
 - [8. App 8: Penguin Classification App](#8-app-8-penguin-classification-app)
 
 Finally, use the summary script to build your app: [`streamlit_summary_app.py`](streamlit_summary_app.py).
+
+And, if you want to deploy your app, check:
+
+- [11. Deployment to Heroku](#11-deployment-to-heroku)
+- [12. Deployment to Streamlit Share](#12-deployment-to-streamlit-share)
 
 ## 1. App 1: Simple Stock Price Chart
 
@@ -239,7 +249,14 @@ For any Heroku deployment we need to prepare the following deployment files, whi
 - [`runtime.txt`](runtime.txt): Python version for Heroku deployment.
 - [`requirements.txt`](requirements.txt): requirements for the app.
 
-In addition to those files and the web app, we also need any extra file that the web app might require (e.g., the pickle file, etc.).
+In addition to those files and the web app, we also need any files that the web app might require. In order to make things easier, I link the files to the repository root from the folder `app_8_classification_penguins`. In a regular situation, the deployed repository should resolve the paths without links.
+
+```
+penguins-app.py -> app_8_classification_penguins/penguins-app.py
+penguins_cleaned.csv -> app_8_classification_penguins/penguins_cleaned.csv
+penguins_clf.pkl -> app_8_classification_penguins/penguins_clf.pkl
+penguins_example.csv -> app_8_classification_penguins/penguins_example.csv
+```
 
 In the following, I explain first how to create those deployment files. Then, the deployment process is explained.
 
@@ -278,6 +295,15 @@ Thus:
 web: sh setup.sh && streamlit run penguins-app.py
 ```
 
+Note that I made a link of the app file and the required archives to the root, so that that command `streamlit run penguins-app.py` can be run:
+
+```
+penguins-app.py -> app_8_classification_penguins/penguins-app.py
+penguins_cleaned.csv -> app_8_classification_penguins/penguins_cleaned.csv
+penguins_clf.pkl -> app_8_classification_penguins/penguins_clf.pkl
+penguins_example.csv -> app_8_classification_penguins/penguins_example.csv
+```
+
 #### [`setup.sh`](setup.sh)
 
 A setup bash script which creates the `streamlit` configuration file; we could add that file to our repository, too, I guess.
@@ -292,6 +318,8 @@ headless = true\n\
 \n\
 " > ~/.streamlit/config.toml
 ```
+
+More on `streamlit` configuration: [Streamlit Configuration](https://docs.streamlit.io/library/advanced-features/configuration).
 
 #### [`runtime.txt`](runtime.txt)
 
@@ -356,14 +384,31 @@ We can **check the Heroku app in the web GUI**: We select the app in the main da
 - More > View logs: logs of deployment are shown
   - If we have no `Procfile`, the slug will be deployed, but nothing will happen (a default blank app is launched); the logs will reflect that
 
+After the deployment is done (10-15 mins later), we get the link to the app:
+
+[https://penguins-app-streamlit.herokuapp.com/](https://penguins-app-streamlit.herokuapp.com/)
+
 
 ## 12. Deployment to Streamlit Share
+
+The Streamlit deployment is even easier as the Heroku deployment, but not as powerful. Also note that I haven't found any way to use something similar to `.streamlitignore`, so be careful with the size of the repository.
+
+In the Youtube video, the SP500 app is deployed:
 
 [streamlit-10](https://github.com/dataprofessor/streamlit-10)
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/dataprofessor/streamlit-10/main/sp500-app.py)
 
+However, I deployed the same penguins app as in the Heroku case.
 
+To deploy it in Streamlit share, we need to go to [https://share.streamlit.io/](https://share.streamlit.io/). There, we create an account and link our Github account. The process is similar as with Heroku: we link a Github repo which should contain the main app. Additionally, we need to have a `requirements.txt` file with all the dependencies. Therefore, the links created in the previous section (Heroku deployment) should still work. We can check that everything is fine by running the app locally: `streamlit run penguins-app.py`. When everything is set up, we click on `New app` and we fill in the form:
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/mxagar/streamlit_guide/main/app.py)
+- Repository: `mxagar/streamlit_guide`
+- Branch: `main`
+- Main file path: `penguins-app.py`
+- Advanced settings:
+  - Python version: `3.9`
+  - (Secrets using TOML format)
+- Deploy! We get the side panel `Manage`, where we see how the app is being deployed.
 
+After the deployment is done (10-15 mins later), we get the link to the app. We can embed the link in a badge using the pattern above.

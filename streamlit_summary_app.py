@@ -44,12 +44,18 @@ List of concepts:
     - Grouping user input in functions
 - File uploading
 - Use of conditionals to control displayed app parts
+- Example of loading and using a model pickle
 
 Important examples:
 
 - app_3_eda_basketball
 - app_6_eda_cryptocurrency
 - app_8_classification_penguins
+
+For a deployment guide, check:
+
+- Section 11 from Streamlit_Guide.md: Deployment to Heroku
+- Section 12 from Streamlit_Guide.md: Deployment to Streamlit Share
 
 General notes:
 
