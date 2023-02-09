@@ -19,11 +19,14 @@ Detailed documentation:
 
     https://docs.streamlit.io/library/get-started
 
-List of concepts:
+List of concepts covered in this script:
 
+- Website setup
 - Display images
-- Display Markdown text
+- Display Markdown text, titles, etc.
 - Expander bars (e.g., About)
+- Loading datasets, best practices
+- Spinner
 - Headers, sub-headers
 - Sidebar area (collapsable)
 - Input text areas
@@ -45,6 +48,7 @@ List of concepts:
 - File uploading
 - Use of conditionals to control displayed app parts
 - Example of loading and using a model pickle
+- Excursus: Streamlit AgGrid
 
 Important examples:
 
@@ -56,6 +60,10 @@ For a deployment guide, check:
 
 - Section 11 from Streamlit_Guide.md: Deployment to Heroku
 - Section 12 from Streamlit_Guide.md: Deployment to Streamlit Share
+
+For a medium-sized app example, check:
+
+    https://github.com/mxagar/course_recommender_streamlit
 
 General notes:
 
@@ -77,6 +85,16 @@ import seaborn as sns
 import altair as alt
 import base64
 import pickle
+
+# Basic webpage setup
+st.set_page_config(
+   page_title="My App Name",
+   layout="wide",
+   initial_sidebar_state="expanded",
+)
+
+# Write a page title, if we want
+st.title("This is a sample app")
 
 # Load page/app logo
 image = Image.open('logo.jpg')
@@ -102,6 +120,31 @@ Name, LinkedIn, Web, etc.
 # and use any libraries; e.g.: 
 # Load/get a dataset
 df = pd.read_csv('data/dataset.csv')
+# However, it is better to handle the loading
+# via another library/backend module, e.g.:
+import backend as backend # module where we define the loading functionality
+# Cache: Re-Run any time function name / code / parameter change
+# and store to local cache.
+# If the cached function has st.write() / st.success() or similar which changes
+# the web app, it will be re-written if the cache is missed
+# and an alert/warning will be shown; to supress the warning
+# use suppress_st_warning=True, i.e.:
+# @st.cache(suppress_st_warning=True)
+@st.cache 
+def load_dataset():
+    return backend.load_dataset()
+# ...
+df = load_dataset()
+# Example: https://github.com/mxagar/course_recommender_streamlit
+
+# Spinner: Temporarily displays a message
+# while executing a block of code.
+with st.spinner('Loading datasets...'):
+    df1 = load_dataset("1")
+    df2 = load_dataset("2")
+    # ...
+# Success message
+st.success('Datasets loaded successfully...')
 
 # Add a header
 st.write("""
@@ -189,9 +232,11 @@ df = load_data(selected_year)
 # Then, filter dataframe and show it
 # Example: app_3_eda_basketball, app_5_eda_sp500_stock
 # Sidebar multiselection widget - Team selection
+# Multiselect returns selected value
 teams = sorted(df.team.unique())
 selected_teams = st.sidebar.multiselect('Teams', teams, teams) # name, all options/categories, default options/categories
 # Sidebar slider widget - Team selection
+# Slider returns selected value
 num_members = st.sidebar.slider('Minimum members', 20, 50, 30) # min, max, default
 # Sidebar multiselection widget - Position selection
 positions = ['C','PF','SF','PG','SG']
@@ -201,6 +246,13 @@ df_filtered = df[(df.team.isin(selected_teams) & df.position.isin(selected_posit
 st.dataframe(df_filtered)
 
 ## Button to display heatmap
+# If we press the button, its return is True
+button1 = st.button("Click to show a dataframe")
+print(button1) # False if not pressed, True else
+# We can do actions if a button is pressed
+if button1:
+    # Do something
+    pass
 # Example: app_3_eda_basketball
 if st.button('Correlation Heatmap'):
     st.header('Correlation Heatmap')
@@ -321,3 +373,79 @@ penguins_species = np.array(['Adelie','Chinstrap','Gentoo'])
 st.write(penguins_species[prediction])
 st.subheader('Prediction Probability')
 st.write(prediction_proba)
+
+###
+### EXCURSUS: Streamlit AgGrid
+###
+
+# Streamlit AgGrid
+# https://pypi.org/project/streamlit-aggrid/
+# This component enables creating interactive tables in which:
+# - The user can select rows
+# - There are Filters and Column operations available:
+#   - Filters: filter cell values from different columns
+#   - Column operations: group by values, aggregate functions
+# To install it:
+#   pip install streamlit-aggrid
+
+# Imports
+from st_aggrid import AgGrid
+from st_aggrid.grid_options_builder import GridOptionsBuilder
+from st_aggrid import GridUpdateMode, DataReturnMode
+
+# A common way of way of using it is defining a function
+# in which the table is defined from a dataset.
+# Then, that function is called in the UI where it should be places
+# in the layout.
+# See example:
+# https://github.com/mxagar/course_recommender_streamlit
+
+@st.cache
+def load_dataset():
+    return pd.read_csv("dataset.csv")
+
+def init_app():
+    # Load all dataframes
+    with st.spinner('Loading dataset...'):
+        df = load_dataset()
+
+    st.success('Dataset loaded successfully...')
+    st.markdown("""---""")
+    st.subheader("Please, select rows: ")
+
+    # GridOptionsBuilder: Define options of interactive table
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_default_column(enablePivot=True, enableValue=True, enableRowGroup=True)
+    gb.configure_selection(selection_mode="multiple", use_checkbox=True)
+    gb.configure_side_bar()
+    grid_options = gb.build()
+
+    # Create an AgGrid: an interactive table from which we get a response
+    # with the rows selected by the user
+    response = AgGrid(
+        df,
+        gridOptions=grid_options,
+        enable_enterprise_modules=True,
+        update_mode=GridUpdateMode.MODEL_CHANGED,
+        data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
+        fit_columns_on_grid_load=False,
+    )
+    # response is a dictionary with these key:
+    # response["data"]: entire CSV in a string
+    # response["selected_rows"]: list of selected rows; each element is a dictionary
+    #   with the column names as keys
+    #   and row cell contents as values
+
+    # Use user response to build a filtered dataframe
+    # The column names should be related to the original columns
+    # in df, e.g., we can use the same column names
+    results = pd.DataFrame(response["selected_rows"],
+                           columns=['COURSE_ID', 'TITLE', 'DESCRIPTION'])
+    st.subheader("Your selected rows: ")
+    st.table(results)
+    
+    return results
+
+# Initialize the app
+st.title("My App")
+selected_df = init_app()

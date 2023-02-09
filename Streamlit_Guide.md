@@ -48,6 +48,7 @@ Table of contents:
       - [`requirements.txt`](#requirementstxt)
     - [Deployment Process](#deployment-process)
   - [12. Deployment to Streamlit Share](#12-deployment-to-streamlit-share)
+  - [Excursus: Streamlit AgGrid](#excursus-streamlit-aggrid)
 
 ## 0. Introduction and Setup
 
@@ -414,3 +415,28 @@ To deploy it in Streamlit share, we need to go to [https://share.streamlit.io/](
 After the deployment is done, we get the link to the app. We can embed the link in a badge using the pattern above.
 
 :warning: The deployment took in my case very long with the complete repository and the links and it didn't really complete. I think that [Streamlit Share](https://share.streamlit.io/) is conceived for much smaller and slim apps. That, or the links don't work.
+
+## Excursus: Streamlit AgGrid
+
+There is an *excursus* section in [`streamlit_summary_app.py`](./streamlit_summary_app.py) in which I introduce how to use the [streamlit-aggrid](https://pypi.org/project/streamlit-aggrid/) component.
+
+This component enables creating interactive tables in which:
+
+- The user can select rows
+- There are Filters and Column operations available:
+  - Filters: filter cell values from different columns
+  - Column operations: group by values, aggregate functions
+
+To install it:
+
+```bash
+pip install streamlit-aggrid
+```
+
+An usage example is provided in my repository [course_recommender_streamlit](https://github.com/mxagar/course_recommender_streamlit).
+
+Interesting links:
+
+- [Streamlit AgGrid](https://pypi.org/project/streamlit-aggrid/)
+- [Medium: Streamlit App with Aggrid and Google Sheets](https://towardsdatascience.com/automate-streamlit-web-app-using-interactive-aggrid-with-google-sheets-81b93fd9e648)
+- [Medium: 7 Reasons Why You Should Use the Streamlit AgGrid Component](https://towardsdatascience.com/7-reasons-why-you-should-use-the-streamlit-aggrid-component-2d9a2b6e32f0)
