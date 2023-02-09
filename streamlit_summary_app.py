@@ -130,6 +130,7 @@ import backend as backend # module where we define the loading functionality
 # and an alert/warning will be shown; to supress the warning
 # use suppress_st_warning=True, i.e.:
 # @st.cache(suppress_st_warning=True)
+# More info: https://docs.streamlit.io/library/advanced-features/caching
 @st.cache 
 def load_dataset():
     return backend.load_dataset()
